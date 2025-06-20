@@ -1,6 +1,6 @@
 {
   "name": "mikro-orm-temporal",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Temporal types for Mikro ORM",
   "type": "module",
   "author": "Ben Scholzen 'DASPRiD'",
