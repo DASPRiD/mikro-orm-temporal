@@ -1,0 +1,61 @@
+services:
+  mysql:
+    image: mysql:9.0-oracle
+    restart: unless-stopped
+    ports:
+      - "5001:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    command: [
+      "mysqld",
+      "--innodb_file_per_table=0",
+      "--innodb_doublewrite=0",
+      "--skip-name-resolve"
+    ]
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 1s
+      timeout: 45s
+      retries: 45
+      start_period: 3s
+
+  mariadb:
+    image: mariadb:11
+    ports:
+      - "5002:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      interval: 1s
+      timeout: 45s
+      retries: 45
+      start_period: 3s
+
+  postgres:
+    image: postgres:16
+    ports:
+      - "5003:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 1s
+      timeout: 45s
+      retries: 45
+      start_period: 3s
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - '5004:1433'
+    environment:
+      MSSQL_SA_PASSWORD: Root.Root
+      MSSQL_TELEMETRY_ENABLED: 0
+      ACCEPT_EULA: Y
+    healthcheck:
+      test: [ "CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-C", "-U", "sa", "-P", "Root.Root", "-Q", "select 1", "-b"]
+      interval: 1s
+      timeout: 45s
+      retries: 45
+      start_period: 3s
