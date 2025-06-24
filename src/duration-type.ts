@@ -6,19 +6,12 @@ type PostgresInterval = {
 };
 
 export class DurationType extends Type<Temporal.Duration | null, string | number | null> {
-    public convertToDatabaseValue(
-        value: Temporal.Duration | null,
-        platform: Platform,
-    ): string | number | null {
+    public convertToDatabaseValue(value: Temporal.Duration | null): string | number | null {
         if (value === null) {
             return null;
         }
 
-        if (isPostgres(platform)) {
-            return value.toString();
-        }
-
-        return value.total({ unit: "seconds" });
+        return value.toString();
     }
 
     public convertToJSValue(
@@ -29,11 +22,11 @@ export class DurationType extends Type<Temporal.Duration | null, string | number
         if (value === null) {
             return null;
         }
-        /* node:coverage enable */
 
         if (typeof value === "number") {
             return Temporal.Duration.from({ seconds: value });
         }
+        /* node:coverage enable */
 
         if (value.startsWith("P")) {
             return Temporal.Duration.from(value);
@@ -61,7 +54,7 @@ export class DurationType extends Type<Temporal.Duration | null, string | number
             return platform.getIntervalTypeDeclarationSQL({});
         }
 
-        // For all other platforms we store the duration as integer in seconds.
-        return platform.getIntegerTypeDeclarationSQL({});
+        // For all other platforms we store the duration as string in ISO format.
+        return platform.getVarcharTypeDeclarationSQL({});
     }
 }

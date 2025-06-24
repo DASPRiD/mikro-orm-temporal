@@ -54,7 +54,7 @@ export class OffsetDateTimeType extends Type<Temporal.ZonedDateTime | null, stri
 
     public override getColumnType(prop: EntityProperty, platform: Platform): string {
         if (isMsSql(platform)) {
-            // Postgres has a true single-purpose column type for timestamps with offset.
+            // MSSQL has a true single-purpose column type for timestamps with offset.
             return "DATETIMEOFFSET";
         }
 
