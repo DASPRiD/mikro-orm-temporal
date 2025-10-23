@@ -13,7 +13,7 @@ services:
       "--skip-name-resolve"
     ]
     healthcheck:
-      test: [ "CMD-SHELL", "mysql -h localhost -u root -e 'SELECT 1'" ]
+      test: [ "CMD-SHELL", "mysql --protocol=TCP -e 'SELECT 1'" ]
       interval: 1s
       timeout: 45s
       retries: 45
