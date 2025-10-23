@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.1.0...v1.1.1) (2025-10-23)
+
+
+### Bug Fixes
+
+* add provenance attestation ([70f2060](https://github.com/DASPRiD/mikro-orm-temporal/commit/70f20601f8a4eb2196f6c3ad23dc7225086213dd))
+
 # [1.1.0](https://github.com/dasprid/mikro-orm-temporal/compare/v1.0.0...v1.1.0) (2025-06-24)
 
 
