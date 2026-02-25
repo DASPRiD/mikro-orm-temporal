@@ -13,6 +13,9 @@ The library exports the following types:
 - `PlainDateTimeType`
 - `PlainTimeType`
 - `OffsetDateTimeType`
+- `InstantType`
+- `PlainMonthDayType`
+- `PlainYearMonthType`
 
 ## Installation
 
@@ -44,5 +47,5 @@ export class HelloWorld {
 Due to MikroORM not distinguishing between timestamps with and without timezone and some other quirks, this library
 makes some assumptions and decisions:
 
-- Durations are stored as `INTERVAL` in Postgres and as `INTEGER` (in seconds) on all other platforms.
+- Durations are stored as `INTERVAL` in Postgres and as `VARCHAR` (ISO string) on all other platforms.
 - `PlainDateTime` is stored as `VARCHAR(19)` on MSSQL, as Tedious introduces timezone issues.
