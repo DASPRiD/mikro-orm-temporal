@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.1.1...v1.2.0) (2026-02-25)
+
+
+### Features
+
+* add support for Temporal.Instant ([3b2e846](https://github.com/DASPRiD/mikro-orm-temporal/commit/3b2e846f0272119180393aff2152915a4f566bcc))
+
 ## [1.1.1](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.1.0...v1.1.1) (2025-10-23)
 
 
