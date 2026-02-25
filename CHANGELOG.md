@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.2.0...v1.2.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* add missing types to README ([186351f](https://github.com/DASPRiD/mikro-orm-temporal/commit/186351f30d513f3382966c469c4dcdc799e03b9e))
+
 # [1.2.0](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.1.1...v1.2.0) (2026-02-25)
 
 
