@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.2.1...v2.0.0) (2026-03-14)
+
+
+### Features
+
+* update to MikroORM v7 ([#1](https://github.com/DASPRiD/mikro-orm-temporal/issues/1)) ([42e1c5d](https://github.com/DASPRiD/mikro-orm-temporal/commit/42e1c5dcfc9a9f691d70a707302ebb619d356b14))
+
+
+### BREAKING CHANGES
+
+* this release requires Mikro ORM v7
+
 ## [1.2.1](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.2.0...v1.2.1) (2026-02-25)
 
 
