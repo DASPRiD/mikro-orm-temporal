@@ -1,44 +1,45 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import {
-    Embeddable,
-    Embedded,
-    Entity,
-    type MikroORM,
-    PrimaryKey,
-    Property,
-    t,
-} from "@mikro-orm/core";
+import { defineEntity, type MikroORM, p } from "@mikro-orm/core";
 import { PlainYearMonthType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 
-@Embeddable()
-class Json {
-    @Property({ type: PlainYearMonthType })
-    public plainYearMonth: Temporal.PlainYearMonth | null;
+const JsonSchema = defineEntity({
+    name: "Json",
+    embeddable: true,
+    properties: {
+        plainYearMonth: p.type(PlainYearMonthType).nullable(),
+    },
+});
 
+class Json extends JsonSchema.class {
     public constructor(plainYearMonth: Temporal.PlainYearMonth | null) {
+        super();
         this.plainYearMonth = plainYearMonth;
     }
 }
 
-@Entity()
-class PlainYearMonthEntity {
-    @PrimaryKey({ type: t.integer })
-    public id: number;
+JsonSchema.setClass(Json);
 
-    @Property({ type: PlainYearMonthType, nullable: true })
-    public plainYearMonth: Temporal.PlainYearMonth | null;
+const PlainYearMonthEntitySchema = defineEntity({
+    name: "PlainYearMonthEntity",
+    properties: {
+        id: p.integer().primary(),
+        plainYearMonth: () => p.type(PlainYearMonthType).nullable(),
+        json: () => p.embedded(JsonSchema).object(),
+    },
+});
 
-    @Embedded(() => Json, { object: true })
-    public json: Json;
-
+class PlainYearMonthEntity extends PlainYearMonthEntitySchema.class {
     public constructor(id: number, plainYearMonth: Temporal.PlainYearMonth | null) {
+        super();
         this.id = id;
         this.plainYearMonth = plainYearMonth;
         this.json = new Json(plainYearMonth);
     }
 }
+
+PlainYearMonthEntitySchema.setClass(PlainYearMonthEntity);
 
 await describe("plain-year-month-type", async () => {
     await describeTestMatrix({ entities: [PlainYearMonthEntity] }, (initOrm) => {
@@ -56,8 +57,7 @@ await describe("plain-year-month-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.PlainYearMonth.from("2005-06");
             const entity = new PlainYearMonthEntity(1, time);
-
-            await em.persistAndFlush(entity);
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainYearMonthEntity, 1);
@@ -68,7 +68,7 @@ await describe("plain-year-month-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new PlainYearMonthEntity(2, null);
-            await em.persistAndFlush(entity);
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainYearMonthEntity, 2);

@@ -1,46 +1,47 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import {
-    Embeddable,
-    Embedded,
-    Entity,
-    type MikroORM,
-    PrimaryKey,
-    Property,
-    t,
-} from "@mikro-orm/core";
+import { defineEntity, type MikroORM, p } from "@mikro-orm/core";
 import { PlainMonthDayType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 
-@Embeddable()
-class Json {
-    @Property({ type: PlainMonthDayType })
-    public plainMonthDay: Temporal.PlainMonthDay | null;
+const JsonSchema = defineEntity({
+    name: "Json",
+    embeddable: true,
+    properties: {
+        plainMonthDay: p.type(PlainMonthDayType).nullable(),
+    },
+});
 
+class Json extends JsonSchema.class {
     public constructor(plainMonthDay: Temporal.PlainMonthDay | null) {
+        super();
         this.plainMonthDay = plainMonthDay;
     }
 }
 
-@Entity()
-class PlainMonthDayEntity {
-    @PrimaryKey({ type: t.integer })
-    public id: number;
+JsonSchema.setClass(Json);
 
-    @Property({ type: PlainMonthDayType, nullable: true })
-    public plainMonthDay: Temporal.PlainMonthDay | null;
+const PlainMonthDayEntitySchema = defineEntity({
+    name: "PlainMonthDayEntity",
+    properties: {
+        id: p.integer().primary(),
+        plainMonthDay: () => p.type(PlainMonthDayType).nullable(),
+        json: () => p.embedded(JsonSchema).object(),
+    },
+});
 
-    @Embedded(() => Json, { object: true })
-    public json: Json;
-
+class PlainMonthDayEntity extends PlainMonthDayEntitySchema.class {
     public constructor(id: number, plainMonthDay: Temporal.PlainMonthDay | null) {
+        super();
         this.id = id;
         this.plainMonthDay = plainMonthDay;
         this.json = new Json(plainMonthDay);
     }
 }
 
-await describe("plain-year-month-type", async () => {
+PlainMonthDayEntitySchema.setClass(PlainMonthDayEntity);
+
+await describe("plain-month-day-type", async () => {
     await describeTestMatrix({ entities: [PlainMonthDayEntity] }, (initOrm) => {
         let orm: MikroORM;
 
@@ -56,8 +57,7 @@ await describe("plain-year-month-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.PlainMonthDay.from("12-30");
             const entity = new PlainMonthDayEntity(1, time);
-
-            await em.persistAndFlush(entity);
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainMonthDayEntity, 1);
@@ -68,7 +68,7 @@ await describe("plain-year-month-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new PlainMonthDayEntity(2, null);
-            await em.persistAndFlush(entity);
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainMonthDayEntity, 2);

@@ -31,15 +31,27 @@ yarn add mikro-orm-temporal
 
 ## Usage
 
-```ts
-import { OffsetDateTimeType } from 'mikro-orm-temporal';
-import { Entity, Property } from "@mikro-orm/core";
+### With `defineEntity` (recommended)
 
-@Entity()
-export class HelloWorld {
-    @Property({type: OffsetDateTimeType})
-    public dateTime: Temporal.ZonedDateTime;
-}
+Use `p.type()` from `@mikro-orm/core` to wire up any temporal type, then chain modifiers like
+`.nullable()` as needed:
+
+```ts
+import { defineEntity, p } from '@mikro-orm/core';
+import { OffsetDateTimeType, PlainDateType } from 'mikro-orm-temporal';
+
+const EventSchema = defineEntity({
+    name: 'Event',
+    properties: {
+        id: p.integer().primary(),
+        startsAt: p.type(OffsetDateTimeType),
+        endsAt: () => p.type(OffsetDateTimeType).nullable(),
+        date: p.type(PlainDateType),
+    },
+});
+
+export class Event extends EventSchema.class {}
+EventSchema.setClass(Event);
 ```
 
 ## Caveats

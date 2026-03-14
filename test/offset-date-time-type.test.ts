@@ -1,44 +1,45 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import {
-    Embeddable,
-    Embedded,
-    Entity,
-    type MikroORM,
-    PrimaryKey,
-    Property,
-    t,
-} from "@mikro-orm/core";
+import { defineEntity, type MikroORM, p } from "@mikro-orm/core";
 import { OffsetDateTimeType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 
-@Embeddable()
-class Json {
-    @Property({ type: OffsetDateTimeType })
-    public offsetDateTime: Temporal.ZonedDateTime | null;
+const JsonSchema = defineEntity({
+    name: "Json",
+    embeddable: true,
+    properties: {
+        offsetDateTime: p.type(OffsetDateTimeType).nullable(),
+    },
+});
 
+class Json extends JsonSchema.class {
     public constructor(offsetDateTime: Temporal.ZonedDateTime | null) {
+        super();
         this.offsetDateTime = offsetDateTime;
     }
 }
 
-@Entity()
-class OffsetDateTimeEntity {
-    @PrimaryKey({ type: t.integer })
-    public id: number;
+JsonSchema.setClass(Json);
 
-    @Property({ type: OffsetDateTimeType, nullable: true })
-    public offsetDateTime: Temporal.ZonedDateTime | null;
+const OffsetDateTimeEntitySchema = defineEntity({
+    name: "OffsetDateTimeEntity",
+    properties: {
+        id: p.integer().primary(),
+        offsetDateTime: () => p.type(OffsetDateTimeType).nullable(),
+        json: () => p.embedded(JsonSchema).object(),
+    },
+});
 
-    @Embedded(() => Json, { object: true })
-    public json: Json;
-
+class OffsetDateTimeEntity extends OffsetDateTimeEntitySchema.class {
     public constructor(id: number, offsetDateTime: Temporal.ZonedDateTime | null) {
+        super();
         this.id = id;
         this.offsetDateTime = offsetDateTime;
         this.json = new Json(offsetDateTime);
     }
 }
+
+OffsetDateTimeEntitySchema.setClass(OffsetDateTimeEntity);
 
 await describe("offset-date-time-type", async () => {
     await describeTestMatrix({ entities: [OffsetDateTimeEntity] }, (initOrm) => {
@@ -56,8 +57,7 @@ await describe("offset-date-time-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.ZonedDateTime.from("2005-06-17T13:00:00+02:00[Europe/Berlin]");
             const entity = new OffsetDateTimeEntity(1, time);
-
-            await em.persistAndFlush(entity);
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(OffsetDateTimeEntity, 1);
@@ -68,7 +68,7 @@ await describe("offset-date-time-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new OffsetDateTimeEntity(2, null);
-            await em.persistAndFlush(entity);
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(OffsetDateTimeEntity, 2);
