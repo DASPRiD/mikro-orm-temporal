@@ -57,8 +57,7 @@ await describe("offset-date-time-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.ZonedDateTime.from("2005-06-17T13:00:00+02:00[Europe/Berlin]");
             const entity = new OffsetDateTimeEntity(1, time);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(OffsetDateTimeEntity, 1);
@@ -69,8 +68,7 @@ await describe("offset-date-time-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new OffsetDateTimeEntity(2, null);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(OffsetDateTimeEntity, 2);

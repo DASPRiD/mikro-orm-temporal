@@ -57,8 +57,7 @@ await describe("plain-year-month-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.PlainYearMonth.from("2005-06");
             const entity = new PlainYearMonthEntity(1, time);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainYearMonthEntity, 1);
@@ -69,8 +68,7 @@ await describe("plain-year-month-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new PlainYearMonthEntity(2, null);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainYearMonthEntity, 2);

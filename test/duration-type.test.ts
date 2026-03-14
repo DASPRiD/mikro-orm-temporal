@@ -57,8 +57,7 @@ await describe("duration-type", async () => {
             const em = orm.em.fork();
             const duration = Temporal.Duration.from("P1D");
             const entity = new DurationEntity(1, duration);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(DurationEntity, 1);
@@ -75,8 +74,7 @@ await describe("duration-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new DurationEntity(2, null);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(DurationEntity, 2);

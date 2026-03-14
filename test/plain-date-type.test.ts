@@ -57,8 +57,7 @@ await describe("plain-date-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.PlainDate.from("2005-06-17");
             const entity = new PlainDateEntity(1, time);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainDateEntity, 1);
@@ -69,8 +68,7 @@ await describe("plain-date-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new PlainDateEntity(2, null);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainDateEntity, 2);

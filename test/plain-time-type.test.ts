@@ -57,8 +57,7 @@ await describe("plain-time-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.PlainTime.from("12:30:29");
             const entity = new PlainTimeEntity(1, time);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainTimeEntity, 1);
@@ -69,8 +68,7 @@ await describe("plain-time-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new PlainTimeEntity(2, null);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainTimeEntity, 2);

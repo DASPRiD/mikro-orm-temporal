@@ -57,8 +57,7 @@ await describe("instant-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.Instant.from("2005-06-17T13:00:00Z");
             const entity = new InstantEntity(1, time);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(InstantEntity, 1);
@@ -69,8 +68,7 @@ await describe("instant-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new InstantEntity(2, null);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(InstantEntity, 2);

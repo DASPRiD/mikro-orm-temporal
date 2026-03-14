@@ -57,8 +57,7 @@ await describe("plain-month-day-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.PlainMonthDay.from("12-30");
             const entity = new PlainMonthDayEntity(1, time);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainMonthDayEntity, 1);
@@ -69,8 +68,7 @@ await describe("plain-month-day-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new PlainMonthDayEntity(2, null);
-            em.persist(entity);
-            await em.flush();
+            await em.persist(entity).flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainMonthDayEntity, 2);
