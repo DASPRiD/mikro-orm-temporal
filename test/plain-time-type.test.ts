@@ -1,44 +1,45 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import {
-    Embeddable,
-    Embedded,
-    Entity,
-    type MikroORM,
-    PrimaryKey,
-    Property,
-    t,
-} from "@mikro-orm/core";
+import { defineEntity, p, type MikroORM } from "@mikro-orm/core";
 import { PlainTimeType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 
-@Embeddable()
-class Json {
-    @Property({ type: PlainTimeType })
-    public plainTime: Temporal.PlainTime | null;
+const JsonSchema = defineEntity({
+    name: "Json",
+    embeddable: true,
+    properties: {
+        plainTime: p.type(PlainTimeType).nullable(),
+    },
+});
 
+class Json extends JsonSchema.class {
     public constructor(plainTime: Temporal.PlainTime | null) {
+        super();
         this.plainTime = plainTime;
     }
 }
 
-@Entity()
-class PlainTimeEntity {
-    @PrimaryKey({ type: t.integer })
-    public id: number;
+JsonSchema.setClass(Json);
 
-    @Property({ type: PlainTimeType, nullable: true })
-    public plainTime: Temporal.PlainTime | null;
+const PlainTimeEntitySchema = defineEntity({
+    name: "PlainTimeEntity",
+    properties: {
+        id: p.integer().primary(),
+        plainTime: () => p.type(PlainTimeType).nullable(),
+        json: () => p.embedded(JsonSchema).object(),
+    },
+});
 
-    @Embedded(() => Json, { object: true })
-    public json: Json;
-
+class PlainTimeEntity extends PlainTimeEntitySchema.class {
     public constructor(id: number, plainTime: Temporal.PlainTime | null) {
+        super();
         this.id = id;
         this.plainTime = plainTime;
         this.json = new Json(plainTime);
     }
 }
+
+PlainTimeEntitySchema.setClass(PlainTimeEntity);
 
 await describe("plain-time-type", async () => {
     await describeTestMatrix({ entities: [PlainTimeEntity] }, (initOrm) => {
@@ -56,8 +57,8 @@ await describe("plain-time-type", async () => {
             const em = orm.em.fork();
             const time = Temporal.PlainTime.from("12:30:29");
             const entity = new PlainTimeEntity(1, time);
-
-            await em.persistAndFlush(entity);
+            em.persist(entity);
+            await em.flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainTimeEntity, 1);
@@ -68,7 +69,8 @@ await describe("plain-time-type", async () => {
         it("accepts null", async () => {
             const em = orm.em.fork();
             const entity = new PlainTimeEntity(2, null);
-            await em.persistAndFlush(entity);
+            em.persist(entity);
+            await em.flush();
             em.clear();
 
             const fromDatabase = await em.findOneOrFail(PlainTimeEntity, 2);

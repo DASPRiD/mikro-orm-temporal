@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { describe } from "node:test";
-import { MikroORM as SqliteMikroORM } from "@mikro-orm/better-sqlite";
+import { MikroORM as SqliteMikroORM } from "@mikro-orm/sqlite";
 import type { AnyEntity, EntityClass, MikroORM } from "@mikro-orm/core";
 import { MikroORM as MariadbMikroORM } from "@mikro-orm/mariadb";
 import { MikroORM as MssqlMikroORM } from "@mikro-orm/mssql";
@@ -100,8 +100,8 @@ const prepareOrm = async (ormPromise: Promise<MikroORM>): Promise<MikroORM> => {
 
     try {
         await orm.schema.ensureDatabase();
-        await orm.schema.dropSchema();
-        await orm.schema.createSchema();
+        await orm.schema.drop();
+        await orm.schema.create();
     } catch (error) {
         await orm.close(true);
         throw error;
