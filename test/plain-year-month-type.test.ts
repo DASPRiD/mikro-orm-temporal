@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import { defineEntity, p, type MikroORM } from "@mikro-orm/core";
+import { defineEntity, type MikroORM, p } from "@mikro-orm/core";
 import { PlainYearMonthType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 

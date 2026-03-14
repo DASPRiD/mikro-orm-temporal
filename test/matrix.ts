@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { describe } from "node:test";
-import { MikroORM as SqliteMikroORM } from "@mikro-orm/sqlite";
 import type { AnyEntity, EntityClass, MikroORM } from "@mikro-orm/core";
 import { MikroORM as MariadbMikroORM } from "@mikro-orm/mariadb";
 import { MikroORM as MssqlMikroORM } from "@mikro-orm/mssql";
 import { MikroORM as MysqlMikroORM } from "@mikro-orm/mysql";
 import { MikroORM as PostgresMikroORM } from "@mikro-orm/postgresql";
+import { MikroORM as SqliteMikroORM } from "@mikro-orm/sqlite";
 
 if (typeof Temporal === "undefined") {
     await import("temporal-polyfill/global");
