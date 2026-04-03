@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/DASPRiD/mikro-orm-temporal/compare/v2.0.0...v2.0.1) (2026-04-03)
+
+
+### Bug Fixes
+
+* use datetimeoffset(7) for MSSQL to match introspected column type ([2c91bba](https://github.com/DASPRiD/mikro-orm-temporal/commit/2c91bba5895b41ee8fabbe91584a638b75bd1ffe))
+
 # [2.0.0](https://github.com/DASPRiD/mikro-orm-temporal/compare/v1.2.1...v2.0.0) (2026-03-14)
 
 
