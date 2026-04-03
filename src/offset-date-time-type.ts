@@ -55,7 +55,7 @@ export class OffsetDateTimeType extends Type<Temporal.ZonedDateTime | null, stri
     public override getColumnType(prop: EntityProperty, platform: Platform): string {
         if (isMsSql(platform)) {
             // MSSQL has a true single-purpose column type for timestamps with offset.
-            return "DATETIMEOFFSET";
+            return "datetimeoffset(7)";
         }
 
         return platform.getDateTimeTypeDeclarationSQL({ length: prop.length });
