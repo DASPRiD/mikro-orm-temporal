@@ -9,7 +9,10 @@ export class PlainTimeType extends Type<Temporal.PlainTime | null, string | null
         return value.toString();
     }
 
-    public convertToJSValue(value: Date | string | null): Temporal.PlainTime | null {
+    public convertToJSValue(
+        value: Date | string | null,
+        platform: Platform,
+    ): Temporal.PlainTime | null {
         /* node:coverage disable */
         if (value === null) {
             return null;
@@ -17,11 +20,12 @@ export class PlainTimeType extends Type<Temporal.PlainTime | null, string | null
         /* node:coverage enable */
 
         if (value instanceof Date) {
+            const usesUtc = platform.getConfig().get("forceUtcTimezone", false);
             return Temporal.PlainTime.from({
-                hour: value.getHours(),
-                minute: value.getMinutes(),
-                second: value.getSeconds(),
-                millisecond: value.getMilliseconds(),
+                hour: usesUtc ? value.getUTCHours() : value.getHours(),
+                minute: usesUtc ? value.getUTCMinutes() : value.getMinutes(),
+                second: usesUtc ? value.getUTCMinutes() : value.getSeconds(),
+                millisecond: usesUtc ? value.getUTCMilliseconds() : value.getMilliseconds(),
             });
         }
 

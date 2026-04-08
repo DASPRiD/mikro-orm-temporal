@@ -75,5 +75,39 @@ await describe("plain-time-type", async () => {
             assert.equal(fromDatabase.plainTime, null);
             assert.equal(fromDatabase.json.plainTime, null);
         });
+
+        it("uses local timezone when forceUtcTimezone is disabled", () => {
+            const type = new PlainTimeType();
+            const date = new Date("1970-01-01T03:04:05.006Z");
+            const oldTZ = process.env.TZ;
+            process.env.TZ = "America/Chicago";
+            const platform = {
+                getConfig: () => ({
+                    get: (key: string, defaultValue: boolean) =>
+                        key === "forceUtcTimezone" ? false : defaultValue,
+                }),
+            } as never;
+
+            const time = type.convertToJSValue(date, platform);
+            const expectedTime = Temporal.PlainTime.from("21:05.006");
+
+            process.env.TZ = oldTZ;
+            assert.ok(time?.equals(expectedTime));
+        });
+
+        it("uses UTC timezone when forceUtcTimezone is enabled", () => {
+            const type = new PlainTimeType();
+            const date = new Date("1970-01-01T03:04:05.006Z");
+            const platform = {
+                getConfig: () => ({
+                    get: (key: string, defaultValue: boolean) =>
+                        key === "forceUtcTimezone" ? true : defaultValue,
+                }),
+            } as never;
+
+            const time = type.convertToJSValue(date, platform);
+
+            assert.ok(time?.equals(Temporal.PlainTime.from("03:04:05.006")));
+        });
     });
 });
