@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/DASPRiD/mikro-orm-temporal/compare/v2.0.1...v2.0.2) (2026-04-09)
+
+
+### Bug Fixes
+
+* handle MSSQL timezone correctly for PlainDate, PlainTime and PlainDateTime ([2f34c45](https://github.com/DASPRiD/mikro-orm-temporal/commit/2f34c453ed114d7c4741533bff32146696a2e31c))
+
 ## [2.0.1](https://github.com/DASPRiD/mikro-orm-temporal/compare/v2.0.0...v2.0.1) (2026-04-03)
 
 
