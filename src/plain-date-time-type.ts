@@ -1,5 +1,5 @@
 import { type EntityProperty, type Platform, Type } from "@mikro-orm/core";
-import { isMsSql, isMySql, isPostgres } from "./utils.js";
+import { isMySql, isPostgres } from "./utils.js";
 
 export class PlainDateTimeType extends Type<Temporal.PlainDateTime | null, string | null> {
     public convertToDatabaseValue(
@@ -19,7 +19,7 @@ export class PlainDateTimeType extends Type<Temporal.PlainDateTime | null, strin
     }
 
     public convertToJSValue(
-        value: string | null,
+        value: Date | string | null,
         platform: Platform,
     ): Temporal.PlainDateTime | null {
         /* node:coverage disable */
@@ -27,6 +27,30 @@ export class PlainDateTimeType extends Type<Temporal.PlainDateTime | null, strin
             return null;
         }
         /* node:coverage enable */
+
+        if (value instanceof Date) {
+            if (platform.getTimezone() === "Z") {
+                return Temporal.PlainDateTime.from({
+                    year: value.getUTCFullYear(),
+                    month: value.getUTCMonth() + 1,
+                    day: value.getUTCDate(),
+                    hour: value.getUTCHours(),
+                    minute: value.getUTCMinutes(),
+                    second: value.getUTCSeconds(),
+                    millisecond: value.getUTCMilliseconds(),
+                });
+            }
+
+            return Temporal.PlainDateTime.from({
+                year: value.getFullYear(),
+                month: value.getMonth() + 1,
+                day: value.getDate(),
+                hour: value.getHours(),
+                minute: value.getMinutes(),
+                second: value.getSeconds(),
+                millisecond: value.getMilliseconds(),
+            });
+        }
 
         if (isMySql(platform)) {
             // Convert to ISO format
@@ -50,12 +74,6 @@ export class PlainDateTimeType extends Type<Temporal.PlainDateTime | null, strin
         if (isPostgres(platform)) {
             // Postgres has a true single-purpose column type for timestamps without timezone.
             return "TIMESTAMP";
-        }
-
-        if (isMsSql(platform)) {
-            // While MSSQL does have a `datetime2` column, tedious tries to convert it to a `Date` and interprets it
-            // as local time, which causes an unwanted time shift.
-            return "VARCHAR(19)";
         }
 
         return platform.getDateTimeTypeDeclarationSQL({ length: prop.length });

@@ -42,7 +42,7 @@ class PlainTimeEntity extends PlainTimeEntitySchema.class {
 PlainTimeEntitySchema.setClass(PlainTimeEntity);
 
 await describe("plain-time-type", async () => {
-    await describeTestMatrix({ entities: [PlainTimeEntity] }, (initOrm) => {
+    describeTestMatrix({ entities: [PlainTimeEntity] }, (initOrm) => {
         let orm: MikroORM;
 
         before(async () => {

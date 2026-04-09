@@ -1,11 +1,12 @@
 {
-    "extends": ["@tsconfig/node22/tsconfig.json"],
+    "extends": ["@tsconfig/node24/tsconfig.json"],
     "compilerOptions": {
         "strict": true,
         "noImplicitAny": true,
         "declaration": true,
         "outDir": "dist",
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "types": ["node"]
     },
     "include": [
         "src/**/*",

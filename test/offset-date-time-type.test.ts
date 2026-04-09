@@ -42,7 +42,7 @@ class OffsetDateTimeEntity extends OffsetDateTimeEntitySchema.class {
 OffsetDateTimeEntitySchema.setClass(OffsetDateTimeEntity);
 
 await describe("offset-date-time-type", async () => {
-    await describeTestMatrix({ entities: [OffsetDateTimeEntity] }, (initOrm) => {
+    describeTestMatrix({ entities: [OffsetDateTimeEntity] }, (initOrm) => {
         let orm: MikroORM;
 
         before(async () => {

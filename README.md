@@ -56,8 +56,4 @@ EventSchema.setClass(Event);
 
 ## Caveats
 
-Due to MikroORM not distinguishing between timestamps with and without timezone and some other quirks, this library
-makes some assumptions and decisions:
-
 - Durations are stored as `INTERVAL` in Postgres and as `VARCHAR` (ISO string) on all other platforms.
-- `PlainDateTime` is stored as `VARCHAR(19)` on MSSQL, as Tedious introduces timezone issues.

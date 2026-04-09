@@ -42,7 +42,7 @@ class PlainYearMonthEntity extends PlainYearMonthEntitySchema.class {
 PlainYearMonthEntitySchema.setClass(PlainYearMonthEntity);
 
 await describe("plain-year-month-type", async () => {
-    await describeTestMatrix({ entities: [PlainYearMonthEntity] }, (initOrm) => {
+    describeTestMatrix({ entities: [PlainYearMonthEntity] }, (initOrm) => {
         let orm: MikroORM;
 
         before(async () => {

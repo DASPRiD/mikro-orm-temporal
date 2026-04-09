@@ -42,7 +42,7 @@ class InstantEntity extends InstantEntitySchema.class {
 InstantEntitySchema.setClass(InstantEntity);
 
 await describe("instant-type", async () => {
-    await describeTestMatrix({ entities: [InstantEntity] }, (initOrm) => {
+    describeTestMatrix({ entities: [InstantEntity] }, (initOrm) => {
         let orm: MikroORM;
 
         before(async () => {

@@ -42,7 +42,7 @@ class DurationEntity extends DurationEntitySchema.class {
 DurationEntitySchema.setClass(DurationEntity);
 
 await describe("duration-type", async () => {
-    await describeTestMatrix({ entities: [DurationEntity] }, (initOrm) => {
+    describeTestMatrix({ entities: [DurationEntity] }, (initOrm) => {
         let orm: MikroORM;
 
         before(async () => {

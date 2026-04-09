@@ -9,7 +9,10 @@ export class PlainTimeType extends Type<Temporal.PlainTime | null, string | null
         return value.toString();
     }
 
-    public convertToJSValue(value: Date | string | null): Temporal.PlainTime | null {
+    public convertToJSValue(
+        value: Date | string | null,
+        platform: Platform,
+    ): Temporal.PlainTime | null {
         /* node:coverage disable */
         if (value === null) {
             return null;
@@ -17,6 +20,15 @@ export class PlainTimeType extends Type<Temporal.PlainTime | null, string | null
         /* node:coverage enable */
 
         if (value instanceof Date) {
+            if (platform.getTimezone() === "Z") {
+                return Temporal.PlainTime.from({
+                    hour: value.getUTCHours(),
+                    minute: value.getUTCMinutes(),
+                    second: value.getUTCSeconds(),
+                    millisecond: value.getUTCMilliseconds(),
+                });
+            }
+
             return Temporal.PlainTime.from({
                 hour: value.getHours(),
                 minute: value.getMinutes(),

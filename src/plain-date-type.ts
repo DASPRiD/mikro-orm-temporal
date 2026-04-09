@@ -9,7 +9,10 @@ export class PlainDateType extends Type<Temporal.PlainDate | null, string | Date
         return value.toString();
     }
 
-    public convertToJSValue(value: string | Date | null): Temporal.PlainDate | null {
+    public convertToJSValue(
+        value: string | Date | null,
+        platform: Platform,
+    ): Temporal.PlainDate | null {
         /* node:coverage disable */
         if (!value) {
             return null;
@@ -17,6 +20,14 @@ export class PlainDateType extends Type<Temporal.PlainDate | null, string | Date
         /* node:coverage enable */
 
         if (value instanceof Date) {
+            if (platform.getTimezone() === "Z") {
+                return Temporal.PlainDate.from({
+                    year: value.getUTCFullYear(),
+                    month: value.getUTCMonth() + 1,
+                    day: value.getUTCDate(),
+                });
+            }
+
             return Temporal.PlainDate.from({
                 year: value.getFullYear(),
                 month: value.getMonth() + 1,

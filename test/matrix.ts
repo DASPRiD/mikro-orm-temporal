@@ -1,3 +1,5 @@
+process.env.TZ = "America/New_York";
+
 import { randomUUID } from "node:crypto";
 import { describe } from "node:test";
 import type { AnyEntity, EntityClass, MikroORM } from "@mikro-orm/core";
@@ -17,7 +19,7 @@ type MatrixOptions = {
     entities: EntityClass<AnyEntity>[];
 };
 
-export const describeTestMatrix = async ({ entities }: MatrixOptions, runner: Runner) => {
+export const describeTestMatrix = ({ entities }: MatrixOptions, runner: Runner): void => {
     describe("SQLite", () => {
         runner(() =>
             prepareOrm(
@@ -77,7 +79,7 @@ export const describeTestMatrix = async ({ entities }: MatrixOptions, runner: Ru
         );
     });
 
-    describe("MSSQL", () => {
+    describe("MSSQL (local timezone)", () => {
         runner(() =>
             prepareOrm(
                 MssqlMikroORM.init({
@@ -85,6 +87,25 @@ export const describeTestMatrix = async ({ entities }: MatrixOptions, runner: Ru
                     port: 5004,
                     user: "sa",
                     password: "Root.Root",
+                    forceUtcTimezone: false,
+                    entities,
+                    discovery: {
+                        warnWhenNoEntities: false,
+                    },
+                }),
+            ),
+        );
+    });
+
+    describe("MSSQL (UTC timezone)", () => {
+        runner(() =>
+            prepareOrm(
+                MssqlMikroORM.init({
+                    dbName: `mikro_orm_test_${randomUUID().replace(/-/g, "_")}`,
+                    port: 5004,
+                    user: "sa",
+                    password: "Root.Root",
+                    forceUtcTimezone: true,
                     entities,
                     discovery: {
                         warnWhenNoEntities: false,
