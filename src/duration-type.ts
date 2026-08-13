@@ -15,7 +15,7 @@ export class DurationType extends Type<Temporal.Duration | null, string | number
     }
 
     public convertToJSValue(
-        value: string | number | null,
+        value: Temporal.Duration | string | number | null,
         platform: Platform,
     ): Temporal.Duration | null {
         /* node:coverage disable */
@@ -27,6 +27,10 @@ export class DurationType extends Type<Temporal.Duration | null, string | number
             return Temporal.Duration.from({ seconds: value });
         }
         /* node:coverage enable */
+
+        if (value instanceof Temporal.Duration) {
+            return value;
+        }
 
         if (value.startsWith("P")) {
             return Temporal.Duration.from(value);

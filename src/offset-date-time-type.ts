@@ -19,7 +19,7 @@ export class OffsetDateTimeType extends Type<Temporal.ZonedDateTime | null, stri
     }
 
     public convertToJSValue(
-        value: Date | string | null,
+        value: Temporal.ZonedDateTime | Date | string | null,
         platform: Platform,
     ): Temporal.ZonedDateTime | null {
         /* node:coverage disable */
@@ -27,6 +27,10 @@ export class OffsetDateTimeType extends Type<Temporal.ZonedDateTime | null, stri
             return null;
         }
         /* node:coverage enable */
+
+        if (value instanceof Temporal.ZonedDateTime) {
+            return value;
+        }
 
         if (typeof value === "string") {
             if (isMySql(platform)) {

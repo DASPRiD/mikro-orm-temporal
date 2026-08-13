@@ -42,6 +42,11 @@ class PlainYearMonthEntity extends PlainYearMonthEntitySchema.class {
 PlainYearMonthEntitySchema.setClass(PlainYearMonthEntity);
 
 await describe("plain-year-month-type", async () => {
+    it("passes through an already-converted value", () => {
+        const value = Temporal.PlainYearMonth.from("2005-06");
+        assert.equal(new PlainYearMonthType().convertToJSValue(value), value);
+    });
+
     describeTestMatrix({ entities: [PlainYearMonthEntity] }, (initOrm) => {
         let orm: MikroORM;
 

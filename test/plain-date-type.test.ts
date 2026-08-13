@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { defineEntity, type MikroORM, p } from "@mikro-orm/core";
+import { SqlitePlatform } from "@mikro-orm/sqlite";
 import { PlainDateType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 
@@ -42,6 +43,11 @@ class PlainDateEntity extends PlainDateEntitySchema.class {
 PlainDateEntitySchema.setClass(PlainDateEntity);
 
 await describe("plain-date-type", async () => {
+    it("passes through an already-converted value", () => {
+        const value = Temporal.PlainDate.from("2005-06-17");
+        assert.equal(new PlainDateType().convertToJSValue(value, new SqlitePlatform()), value);
+    });
+
     describeTestMatrix({ entities: [PlainDateEntity] }, (initOrm) => {
         let orm: MikroORM;
 

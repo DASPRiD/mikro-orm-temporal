@@ -9,12 +9,18 @@ export class PlainMonthDayType extends Type<Temporal.PlainMonthDay | null, strin
         return value.toString();
     }
 
-    public convertToJSValue(value: string | null): Temporal.PlainMonthDay | null {
+    public convertToJSValue(
+        value: Temporal.PlainMonthDay | string | null,
+    ): Temporal.PlainMonthDay | null {
         /* node:coverage disable */
         if (!value) {
             return null;
         }
         /* node:coverage enable */
+
+        if (value instanceof Temporal.PlainMonthDay) {
+            return value;
+        }
 
         return Temporal.PlainMonthDay.from(value);
     }

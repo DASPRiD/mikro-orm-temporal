@@ -19,7 +19,7 @@ export class InstantType extends Type<Temporal.Instant | null, string | null> {
     }
 
     public convertToJSValue(
-        value: Date | string | null,
+        value: Temporal.Instant | Date | string | null,
         platform: Platform,
     ): Temporal.Instant | null {
         /* node:coverage disable */
@@ -27,6 +27,10 @@ export class InstantType extends Type<Temporal.Instant | null, string | null> {
             return null;
         }
         /* node:coverage enable */
+
+        if (value instanceof Temporal.Instant) {
+            return value;
+        }
 
         if (typeof value === "string") {
             if (isMySql(platform)) {

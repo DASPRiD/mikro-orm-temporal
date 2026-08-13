@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { defineEntity, type MikroORM, p } from "@mikro-orm/core";
+import { SqlitePlatform } from "@mikro-orm/sqlite";
 import { OffsetDateTimeType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 
@@ -42,6 +43,11 @@ class OffsetDateTimeEntity extends OffsetDateTimeEntitySchema.class {
 OffsetDateTimeEntitySchema.setClass(OffsetDateTimeEntity);
 
 await describe("offset-date-time-type", async () => {
+    it("passes through an already-converted value", () => {
+        const value = Temporal.Instant.from("2005-06-17T13:00:00Z").toZonedDateTimeISO("UTC");
+        assert.equal(new OffsetDateTimeType().convertToJSValue(value, new SqlitePlatform()), value);
+    });
+
     describeTestMatrix({ entities: [OffsetDateTimeEntity] }, (initOrm) => {
         let orm: MikroORM;
 

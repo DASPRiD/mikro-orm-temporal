@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { defineEntity, type MikroORM, p } from "@mikro-orm/core";
+import { SqlitePlatform } from "@mikro-orm/sqlite";
 import { InstantType } from "../src/index.js";
 import { describeTestMatrix } from "./matrix.js";
 
@@ -42,6 +43,11 @@ class InstantEntity extends InstantEntitySchema.class {
 InstantEntitySchema.setClass(InstantEntity);
 
 await describe("instant-type", async () => {
+    it("passes through an already-converted value", () => {
+        const value = Temporal.Instant.from("2005-06-17T13:00:00Z");
+        assert.equal(new InstantType().convertToJSValue(value, new SqlitePlatform()), value);
+    });
+
     describeTestMatrix({ entities: [InstantEntity] }, (initOrm) => {
         let orm: MikroORM;
 
@@ -74,6 +80,27 @@ await describe("instant-type", async () => {
             const fromDatabase = await em.findOneOrFail(InstantEntity, 2);
             assert.equal(fromDatabase.instant, null);
             assert.equal(fromDatabase.json.instant, null);
+        });
+
+        it("accepts an already-converted value in a cursor", async () => {
+            const em = orm.em.fork();
+            await em
+                .persist([
+                    new InstantEntity(3, Temporal.Instant.from("2005-06-17T13:00:00Z")),
+                    new InstantEntity(4, Temporal.Instant.from("2005-06-18T13:00:00Z")),
+                ])
+                .flush();
+            em.clear();
+
+            const page = await em.findByCursor(InstantEntity, {
+                where: {},
+                orderBy: { instant: "asc", id: "asc" },
+                first: 1,
+                after: { instant: Temporal.Instant.from("2005-06-17T13:00:00Z"), id: 3 },
+            });
+
+            assert.equal(page.items.length, 1);
+            assert.equal(page.items[0].id, 4);
         });
     });
 });

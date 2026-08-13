@@ -19,7 +19,7 @@ export class PlainDateTimeType extends Type<Temporal.PlainDateTime | null, strin
     }
 
     public convertToJSValue(
-        value: Date | string | null,
+        value: Temporal.PlainDateTime | Date | string | null,
         platform: Platform,
     ): Temporal.PlainDateTime | null {
         /* node:coverage disable */
@@ -27,6 +27,10 @@ export class PlainDateTimeType extends Type<Temporal.PlainDateTime | null, strin
             return null;
         }
         /* node:coverage enable */
+
+        if (value instanceof Temporal.PlainDateTime) {
+            return value;
+        }
 
         if (value instanceof Date) {
             if (platform.getTimezone() === "Z") {
