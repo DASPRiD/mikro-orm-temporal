@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/DASPRiD/mikro-orm-temporal/compare/v2.0.2...v2.0.3) (2026-08-13)
+
+
+### Bug Fixes
+
+* pass through already-converted values in convertToJSValue ([7a284e1](https://github.com/DASPRiD/mikro-orm-temporal/commit/7a284e1c5b1855f213e6783fb49c1c4a3f0cea0d))
+
 ## [2.0.2](https://github.com/DASPRiD/mikro-orm-temporal/compare/v2.0.1...v2.0.2) (2026-04-09)
 
 
